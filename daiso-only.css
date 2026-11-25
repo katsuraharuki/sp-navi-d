@@ -1,0 +1,4 @@
+/* ダイソー版：行き先はダイソーだけ。地図とお店の情報は全館のまま */
+.save-btn,.save-detail,#fb-saved,[data-tab="saved"],#change-to,body:not([data-explore]) .search{display:none!important}
+.daiso-only{background:#fff4e8;border-left:4px solid #eb6b00;padding:10px 12px;border-radius:6px;font-size:14px;line-height:1.7}
+.about-line small{font-size:.8em;opacity:.85}
