@@ -554,7 +554,6 @@
       });
     }
     function commit(v) {
-      if (recognition) recognition.abort();
       Nav.location.set(v);
       Nav.mountLocation(host, onChange);
       if (onChange) onChange(v);
@@ -586,7 +585,7 @@
             .join("") +
           '</div></section><section class="location-method"><h3>見えているお店から探す</h3><p class="here-ex">例：スタバが左に見える</p>' +
           '<div class="here-row"><input aria-label="近くのお店と見える向き" placeholder="例：スタバが左"><button type="button" class="here-go" data-go>場所を出す</button></div><p class="here-msg" role="status"></p><div data-confirm></div></section>' +
-          '<p class="here-ex location-qr">館内QRからも現在地を設定できます。</p>'
+          '<p class="here-ex location-qr">サンパーク館内にQRコードを設置すると、読み取るだけで現在地を設定できます。</p>'
         : "") +
       "</section>";
     var editButton = host.querySelector("[data-edit]");
