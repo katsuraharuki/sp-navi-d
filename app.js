@@ -541,9 +541,7 @@
     return t + "</svg>";
   };
   Nav.mountLocation = function (host, onChange, edit) {
-    var val = Nav.location.get(),
-      SR = window.SpeechRecognition || window.webkitSpeechRecognition,
-      recognition = null;
+    var val = Nav.location.get();
     function esc(t) {
       return String(t).replace(/[&<>"']/g, function (c) {
         return {
@@ -587,10 +585,7 @@
             })
             .join("") +
           '</div></section><section class="location-method"><h3>見えているお店から探す</h3><p class="here-ex">例：スタバが左に見える</p>' +
-          (SR
-            ? '<button type="button" class="here-mic" data-mic>話して教える</button>'
-            : "") +
-          '<div class="here-row"><input aria-label="近くのお店と見える向き" placeholder="文字でも：スタバが左"><button type="button" class="here-go" data-go>場所を出す</button></div><p class="here-msg" role="status"></p><div data-confirm></div></section>' +
+          '<div class="here-row"><input aria-label="近くのお店と見える向き" placeholder="例：スタバが左"><button type="button" class="here-go" data-go>場所を出す</button></div><p class="here-msg" role="status"></p><div data-confirm></div></section>' +
           '<p class="here-ex location-qr">館内QRからも現在地を設定できます。</p>'
         : "") +
       "</section>";
@@ -603,10 +598,8 @@
     var input = host.querySelector("input"),
       msg = host.querySelector("[role=status]");
     if (!input) return;
-    function locate(texts) {
-      texts = Array.isArray(texts) ? texts : [texts];
-      var result = null, text = texts[0];
-      texts.some(function (candidate) { var found = whereFrom(candidate); if (!found) return false; result = found; text = candidate; return true; });
+    function locate(text) {
+      var result = whereFrom(text);
       msg.textContent = '入力：' + text;
       var box = host.querySelector('[data-confirm]'); box.innerHTML = '';
       if (!result) { msg.textContent += '。お店が分かりませんでした。看板の名前で教えてください。'; return; }
@@ -631,50 +624,6 @@
         commit({ from: b.dataset.start, face: null });
       };
     });
-    var mic = host.querySelector("[data-mic]");
-    if (mic)
-      mic.onclick = function () {
-        if (recognition) {
-          recognition.stop();
-          return;
-        }
-        try {
-          var rec = (recognition = new SR());
-          rec.lang = "ja-JP";
-          rec.interimResults = true;
-          rec.maxAlternatives = 3;
-          mic.textContent = "聞いています…（押すと停止）";
-          msg.textContent = "近くのお店と見える向きを話してください。";
-          rec.onresult = function (e) {
-            var r = e.results[e.results.length - 1];
-            input.value = r[0].transcript;
-            if (r.isFinal) {
-              var alternatives = [];
-              for (var i = 0; i < r.length; i++)
-                alternatives.push(r[i].transcript);
-              locate(alternatives);
-            }
-          };
-          rec.onerror = function (e) {
-            msg.textContent =
-              e.error === "not-allowed"
-                ? "マイクが許可されていません。文字で入力できます。"
-                : e.error === "no-speech"
-                  ? "声が聞こえませんでした。もう一度話すか文字で入力してください。"
-                  : "聞き取れませんでした。文字で入力できます。";
-          };
-          rec.onend = function () {
-            recognition = null;
-            mic.textContent = "話して教える";
-          };
-          rec.start();
-        } catch (e) {
-          recognition = null;
-          mic.textContent = "話して教える";
-          msg.textContent =
-            "音声入力を開始できません。文字で入力してください。";
-        }
-      };
   };
   if (document.body.dataset.explore) return;
 
@@ -959,7 +908,7 @@
       "</b>" +
       '　<button class="link" id="change-from">いまどこ？</button>' +
       "</p>" +
-      '<details class="route-details"><summary>案内の設定</summary><div id="route-voice-setting"></div><div class="seg-wrap" role="group" aria-label="道の選び方"><button class="seg' +
+      '<details class="route-details"><summary>案内の設定</summary><div class="seg-wrap" role="group" aria-label="道の選び方"><button class="seg' +
       (state.stepFree ? "" : " on") +
       '" data-sf="0">ふつう</button>' +
       '<button class="seg' +
